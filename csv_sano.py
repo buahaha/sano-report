@@ -30,33 +30,47 @@ htmlheader = """\
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html"; charset="utf-8">
-<title>Sano</title>
+<meta  http-equiv="Content-Type" content="text/html" charset="utf-8" />
+<title>Sano Agrar Institut</title>
 <style type="text/css">
-
-body {{margin: 100px; padding: 0; text-align: left;}}
+.master_topBar {{ background: url("http://sano.agrarinstitut.pl/themes/MasterImages/topBar.png") repeat-x scroll center 0 transparent;float: left;width: 100%;clear: both;height: 11px;}}
+.content {{ margin: 0 auto; display: block; padding-bottom: 20px;}}
+.space {{ height: 10px}}
+.wrapper {{width: 450px; margin-left: auto; margin-right: auto; position: relative; min-height: 100%}}
+.footer {{position:fixed; bottom:0px;height:20px;width:100%;left:auto;background:#fff; font-size: 80%}}
 h1 {{text-align: center}}
-img {{display: relative; float: right;}}
-
-body {{ font-family: Helvetica,Arial,FreeSans; margin: 0; padding: 0; text-align: left;width: 600px;}}
-table.reporttable {{ border-style: solid; border-width: 1px; margin: 20px auto; text-align: center;}}
-table.reporttable tr.tr_odd {{ background-color: white; }}
-table.reporttable tr.tr_even {{ background-color: white; }}
-table.reporttable th {{ background-color: white; color: black; border: 1px solid black; }}
-table.reporttable td.cell_bold {{ font-weight: bold; }}
+img {{float: right; }}
+body {{background-color: #fff;color: #333333;font-family: Tahoma,Sans-Serif;font-size: 13px;line-height: 18px;margin: 0;overflow-y: scroll;padding: 0; height: 100%}}
+p {{margin: 0px auto;}}
+p#contact {{margin-left: auto; margin-right: auto; position: relative;}}
+a:link {{color: #666;}}
+a:visited {{color: #666;}}
+table.reporttable {{ background: url("http://sano.agrarinstitut.pl/themes/MasterImages/mainBg.jpg") repeat scroll center 0 transparent; border: 2px solid black; border-radius: 10px;margin: auto; text-align: center; border-collapse: collapse;}}
+table.reporttable tr.odd {{ }}
+table.reporttable tr.even {{ }}
+table.reporttable th {{ color: black; border: 2px solid black; }}
+table.reporttable td {{ color: black; border: 1px solid black; font-family: monospace; text-align: right;}}
+table.reporttable td.cell_bold {{ font-weight: bold; border: 2px solid black;}}
 table.reporttable td.cell_money {{ text-align: right; font-family: monospace; }}
 </style>
 </head>
 <body>
-<div id="head">
-<img src="logo.png">
+<div class="master_topBar"></div>
+<div class="space"></div>
+<div class="wrapper">
+<div class="content">
+<img src="logo.png" alt="Logo Sano Agrar Institut" />
 <h1>Täglicher Gülle Stand</h1>
-<p><b> Monat: {0}</b></p>
-<h3>Messzeit täglich immer 8:00 Uhr</h3>
+<p><strong>Monat: {0}</strong>
+<br>Messzeit täglich immer 8:00 Uhr</p>
 </div>
 """.format(month_name[current_month])
 
 htmlfooter = """\
+<div class="footer">
+<p id="contact">Developed by <a href="mailto:simone@neosb.net?subject=Sano">Szymon Błaszczyński</a> for <a href="http://www.sano.pl">Sano</a></p>
+</div>
+</div>
 </body>
 </html>"""
 
@@ -96,10 +110,13 @@ for row in monthly_data:
     		])
     temp = row[0]
 
-for tableclass, extension in exampletypes:
-    outfile = open('report-{0}-{1}.{2}'.format(current_year, current_month, extension), 'wb')
-    if tableclass is HTMLTable:
-        outfile.write(htmlheader)
-    outfile.write(tableclass(headers=[mainrs, subrow1, subrow2]).render(rows))
-    if tableclass is HTMLTable:
-        outfile.write(htmlfooter)
+tableclass = HTMLTable
+extension = 'html'
+backup('report-{0}-{1}.{2}'.format(current_year, current_month, extension))
+outfile = open('report-{0}-{1}.{2}'.format(current_year, current_month, extension), 'wb')
+if tableclass is HTMLTable:
+    outfile.write(htmlheader)
+outfile.write(tableclass(headers=[mainrs, subrow1, subrow2]).render(rows))
+if tableclass is HTMLTable:
+    outfile.write(htmlfooter)
+outfile.close()

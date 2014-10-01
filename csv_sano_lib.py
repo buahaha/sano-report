@@ -16,17 +16,17 @@ def read_helper_temp_line(f):
 
 # backup file
 def backup(file):
-	assert os.path.isfile(file)
-	with open(file, 'r') as f:
-		bak = f.read()
-	filename = file.split('.')
-	filename.insert(1, 'bak')
-	if len(filename) > 2:
-		filename = "{0}-{1}.{2}".format(filename[0], filename[1], filename[2])
-	else:
-		filename = "{0}.{1}".format(filename[0], filename[1])
-	with open(filename, 'w') as f:
-		f.write(bak)
+	if (os.path.isfile(file)):
+		with open(file, 'r') as f:
+			bak = f.read()
+		filename = file.split('.')
+		filename.insert(1, 'bak')
+		if len(filename) > 2:
+			filename = "{0}-{1}.{2}".format(filename[0], filename[1], filename[2])
+		else:
+			filename = "{0}.{1}".format(filename[0], filename[1])
+		with open(filename, 'w') as f:
+			f.write(bak)
 
 # read from csv specific columns from specific row
 def get_data(file, delim, this_row, column):
