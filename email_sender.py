@@ -4,7 +4,7 @@
 # Send an HTML email with an embedded image and a plain text message for
 # email clients that don't want to display the HTML.
 
-def send_mail(html_file, sender, recipent, *args, **kwargs):
+def send_mail(html_file, sender, recipent, logo='logo.png', *args, **kwargs):
   from email.MIMEMultipart import MIMEMultipart
   from email.MIMEText import MIMEText
   from email.MIMEImage import MIMEImage
@@ -53,6 +53,15 @@ def send_mail(html_file, sender, recipent, *args, **kwargs):
   # Define the image's ID as referenced above
   msgImage.add_header('Content-ID', '<image1>')
   msgRoot.attach(msgImage)
+
+  files = (html_file, logo)
+
+  for f in files:
+    part = MIMEBase('application', "octet-stream")
+    part.set_payload(open(f,"rb").read())
+    Encoders.encode_base64(part)
+    part.add_header('Content-Disposition', 'attachment; filename="%s"' % os.path.basename(f))
+    msgRoot.attach(part)
 
   # Send the email (this example assumes SMTP authentication is required)
   server = kwargs.get('server', 'localhost')
