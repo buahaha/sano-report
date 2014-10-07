@@ -17,7 +17,7 @@ with open(settings_path, 'r') as f:
     file = read_helper_equals(read_helper_temp_line(f))[1]
     delim = read_helper_equals(read_helper_temp_line(f))[1]
     sender = read_helper_equals(read_helper_temp_line(f))[1]
-    recipent = read_helper_equals(read_helper_temp_line(f))[1]
+    emails = read_line_helper(f)
     server = read_helper_equals(read_helper_temp_line(f))[1]
     user = read_helper_equals(read_helper_temp_line(f))[1]
     password = read_helper_equals(read_helper_temp_line(f))[1]
@@ -74,7 +74,7 @@ table.reporttable td.cell_money {{ text-align: right; font-family: monospace; }}
 """.format(month_name[current_month])
 htmlfooter = """\
 <div class="footer">
-<p id="contact">Developed by <a href="mailto:simone@neosb.net?subject=Sano">Szymon Błaszczyński</a> for <a href="http://www.sano.pl">Sano</a></p>
+<p id="contact">Developed by <a href="mailto:simone@neosb.net?subject=Sano">Szymon Błaszczyński</a> in Eureka Technology Park for <a href="http://www.sano.pl">Sano</a></p>
 </div>
 </div>
 </body>
@@ -130,11 +130,12 @@ outfile.close()
 
 # Send mail
 from email_sender import send_mail
-if (sender and recipent and server and user and password):
-    send_mail(report_filename, sender, recipent, server=server, user=user, password=password)
-elif (sender and recipent and server and user and not password):
-    send_mail(report_filename, sender, recipent, server=server, user=user, password='')
-elif (sender and recipent and server):
-    send_mail(report_filename, sender, recipent, server=server)
-elif (sender and recipent):
-    send_mail(report_filename, sender, recipent)
+for recipent in emails:
+    if (sender and recipent and server and user and password):
+        send_mail(report_filename, sender, recipent, server=server, user=user, password=password)
+    elif (sender and recipent and server and user and not password):
+        send_mail(report_filename, sender, recipent, server=server, user=user, password='')
+    elif (sender and recipent and server):
+        send_mail(report_filename, sender, recipent, server=server)
+    elif (sender and recipent):
+        send_mail(report_filename, sender, recipent)
