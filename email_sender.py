@@ -9,7 +9,6 @@ def send_mail(html_file, sender, recipent, logo='logo.png', *args, **kwargs):
   from email.MIMEText import MIMEText
   from email.MIMEImage import MIMEImage
   from email.MIMEBase import MIMEBase
-  from email import Encoders
 
   # Define these once; use them twice!
   strFrom = sender
@@ -36,43 +35,46 @@ def send_mail(html_file, sender, recipent, logo='logo.png', *args, **kwargs):
   import os.path
   assert os.path.isfile(html_file)
   with open(html_file, 'rb') as f:
-    temp = f.read()
-    import re
-    html = re.sub("logo.png", "cid:image1", temp)
+    html = f.read()
+    # import re
+    # html = re.sub("logo.png", "cid:image1", temp)
 
-  # We reference the image in the IMG SRC attribute by the ID we give it below
+
   msgText = MIMEText(html, "html", "utf-8")
   msgAlternative.attach(msgText)
 
-  # This example assumes the image is in the current directory
-  assert os.path.isfile('logo.png')
-  fp = open('logo.png', 'rb')
-  msgImage = MIMEImage(fp.read())
-  fp.close()
+  # In case you need some of this functionality, please uncomment
 
-  # Define the image's ID as referenced above
-  msgImage.add_header('Content-ID', '<image1>')
-  msgRoot.attach(msgImage)
+  # We reference the image in the IMG SRC attribute by the ID we give it below
+  # # This example assumes the image is in the current directory
+  # assert os.path.isfile('logo.png')
+  # fp = open('logo.png', 'rb')
+  # msgImage = MIMEImage(fp.read())
+  # fp.close()
 
-  files = (html_file, logo)
+  # # Define the image's ID as referenced above
+  # msgImage.add_header('Content-ID', '<image1>')
+  # msgRoot.attach(msgImage)
 
-  for f in files:
-    part = MIMEBase('application', "octet-stream")
-    part.set_payload(open(f,"rb").read())
-    Encoders.encode_base64(part)
-    part.add_header('Content-Disposition', 'attachment; filename="%s"' % os.path.basename(f))
-    msgRoot.attach(part)
+  # files = (html_file, logo)
 
-  # Send the email (this example assumes SMTP authentication is required)
+  # for f in files:
+  #   part = MIMEBase('application', "octet-stream")
+  #   part.set_payload(open(f,"rb").read())
+  #   Encoders.encode_base64(part)
+  #   part.add_header('Content-Disposition', 'attachment; filename="%s"' % os.path.basename(f))
+  #   msgRoot.attach(part)
+
+  # Send the email
   server = kwargs.get('server', 'localhost')
   user = kwargs.get('user', None)
   password = kwargs.get('password', None)
   import smtplib
   smtp = smtplib.SMTP()
   smtp.connect(server)
+  # Authenticate if username present
   if (not user == None):
     smtp.login(user, password)
   smtp.sendmail(strFrom, strTo, msgRoot.as_string())
-  # print msgRoot.as_string()
   smtp.quit()
 

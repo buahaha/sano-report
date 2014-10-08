@@ -66,7 +66,7 @@ table.reporttable td.cell_money {{ text-align: right; font-family: monospace; }}
 <div class="space"></div>
 <div class="wrapper">
 <div class="content">
-<img src="logo.png" alt="Logo Sano Agrar Institut" />
+<img src="http://sano.agrarinstitut.pl/Themes/MasterImages/sano_logo.png" alt="Logo Sano Agrar Institut" />
 <h1>Täglicher Gülle Stand</h1>
 <p><strong>Monat: {0}</strong>
 <br>Messzeit täglich immer 8:00 Uhr</p>
