@@ -31,7 +31,7 @@ def backup(file):
 		with open(filename, 'w') as f:
 			f.write(bak)
 
-# read from csv specific columns from specific row
+# read csv specific column from specific row
 def get_data(file, delim, this_row, column):
 	data = []
 	# file_n = 0
@@ -40,12 +40,26 @@ def get_data(file, delim, this_row, column):
 		with open(fl, 'rb') as f:
 			reader = csv.reader(f, delimiter=';')
 			i = 0
+			do_break = 0
 			for row in reader:
+				# Check if date is the same
+				if i > this_row - 1:
+					try:
+						date_previous = datetime.strptime(row[column - 2].split(' ')[0], '%d.%m.%Y').date()
+					except ValueError:
+						date_previous = datetime.strptime(row[column - 2].split(' ')[0], '%Y-%m-%d').date()
+					if (date == date_previous):
+						data[-1] = "n/d"
+					if do_break == 1:
+						break
 				if i == this_row - 1:
 					data.append(row[column - 1])
-					break
+					try:
+						date =  datetime.strptime(row[column - 2].split(' ')[0], '%d.%m.%Y').date()
+					except ValueError:
+						date = datetime.strptime(row[column - 2].split(' ')[0], '%Y-%m-%d').date()
+					do_break = 1
 				i += 1
-		# file_n += 1
 	data.insert(0, date.today())
 	return data
 
@@ -56,8 +70,9 @@ def write_to_csv(file, delim, data):
 	# else:
 	# 	with open(file, 'w') as f:
 	# 		titles = delim.join("B1")
-	with open(file, 'a') as f:
-		writer = csv.writer(f, delimiter=delim)
+	with open(file, 'ab') as f:
+		# Line treminator prevent Windows to insert blank line between records
+		writer = csv.writer(f, delimiter=delim, lineterminator='\n')
 		writer.writerow(data)
 
 # write_to_csv('csv-tes2.csv', ';', get_data('5', ';', 0, [0, 2]))
@@ -71,6 +86,7 @@ def read_titles(file, delim):
 
 # print read_titles('csv-tes2.csv', ';')
 
+# Read month of data
 def read_month(file, delim, year, month):
 	assert os.path.isfile(file)
 	day = 1
