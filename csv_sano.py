@@ -108,6 +108,7 @@ monthly_data = read_month(file, delim, current_year, current_month)
 rows = []
 temp = ""
 for row in monthly_data:
+    # Check if day repeats and append only if not
     if (not temp == row[0]):
         rows.append([
             subrow2({'Daten': row[0], 'dArea1': row[1],
