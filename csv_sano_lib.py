@@ -5,6 +5,7 @@ import csv
 from datetime import *
 import os.path
 
+today = date.today()
 
 # read settings.ini helper methods
 def read_line_helper(f):
@@ -33,35 +34,43 @@ def backup(file):
 
 # read csv specific column from specific row
 def get_data(file, delim, this_row, column):
+	from datetime import date as get_date
 	data = []
+	date_csv = get_date(2014, 1, 1)
 	# file_n = 0
 	for fl in file:
-		assert os.path.isfile(fl)
-		with open(fl, 'rb') as f:
-			reader = csv.reader(f, delimiter=';')
-			i = 0
-			do_break = 0
-			for row in reader:
-				# Check if date is the same
-				if i > this_row - 1:
-					try:
-						date_previous = datetime.strptime(row[column - 2].split(' ')[0], '%d.%m.%Y').date()
-					except ValueError:
-						date_previous = datetime.strptime(row[column - 2].split(' ')[0], '%Y-%m-%d').date()
-					if (date == date_previous):
-						data[-1] = "n/d"
-					if do_break == 1:
-						break
-				if i == this_row - 1:
-					data.append(row[column - 1])
-					try:
-						date =  datetime.strptime(row[column - 2].split(' ')[0], '%d.%m.%Y').date()
-					except ValueError:
-						date = datetime.strptime(row[column - 2].split(' ')[0], '%Y-%m-%d').date()
-					do_break = 1
-				i += 1
-	data.insert(0, date.today())
+		data.append(get_data_helper(fl, delim, this_row, column))
+	data.insert(0, today)
 	return data
+
+def get_data_helper(fl, delim, this_row, column):
+	assert os.path.isfile(fl)
+	with open(fl, 'rb') as f:
+		reader = csv.reader(f, delimiter=delim)
+		i = 0
+		# do_break = 0
+		for row in reader:
+			# # Check if date is the same
+			# if i > this_row - 1:
+			# 	try:
+			# 		date_previous = datetime.strptime(row[column - 2].split(' ')[0], '%d.%m.%Y').date()
+			# 	except ValueError:
+			# 		date_previous = datetime.strptime(row[column - 2].split(' ')[0], '%Y-%m-%d').date()
+			# 	if (date == date_previous):
+			# 		data[-1] = "n/d"
+			# 	if do_break == 1:
+			# 		break
+			if i == this_row - 1:
+				data = (row[column - 1])
+				try:
+					date_csv = datetime.strptime(row[column - 2].split(' ')[0], '%Y-%m-%d').date()
+				except ValueError:
+					date_csv =  datetime.strptime(row[column - 2].split(' ')[0], '%d.%m.%Y').date()
+				if (date_csv == today):
+					data = "n/d"
+				break
+			i += 1
+		return data
 
 # append to csv file
 def write_to_csv(file, delim, data):
@@ -75,16 +84,12 @@ def write_to_csv(file, delim, data):
 		writer = csv.writer(f, delimiter=delim, lineterminator='\n')
 		writer.writerow(data)
 
-# write_to_csv('csv-tes2.csv', ';', get_data('5', ';', 0, [0, 2]))
-
 # read titles from csv
 def read_titles(file, delim):
 	assert os.path.isfile(file)
 	with open(file, 'rb') as f:
 		reader = csv.reader(f, delimiter=';')
 		return reader.next()
-
-# print read_titles('csv-tes2.csv', ';')
 
 # Read month of data
 def read_month(file, delim, year, month):
