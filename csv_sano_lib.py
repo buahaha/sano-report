@@ -43,32 +43,31 @@ def get_data(file, delim, this_row, column):
 	data.insert(0, today)
 	return data
 
+# helper method to get data, checks if row date was yesterday and if so returns "n/d" instead
 def get_data_helper(fl, delim, this_row, column):
 	assert os.path.isfile(fl)
 	with open(fl, 'rb') as f:
 		reader = csv.reader(f, delimiter=delim)
 		i = 0
-		# do_break = 0
 		for row in reader:
-			# # Check if date is the same
-			# if i > this_row - 1:
-			# 	try:
-			# 		date_previous = datetime.strptime(row[column - 2].split(' ')[0], '%d.%m.%Y').date()
-			# 	except ValueError:
-			# 		date_previous = datetime.strptime(row[column - 2].split(' ')[0], '%Y-%m-%d').date()
-			# 	if (date == date_previous):
-			# 		data[-1] = "n/d"
-			# 	if do_break == 1:
-			# 		break
 			if i == this_row - 1:
-				data = (row[column - 1])
 				try:
 					date_csv = datetime.strptime(row[column - 2].split(' ')[0], '%Y-%m-%d').date()
 				except ValueError:
 					date_csv =  datetime.strptime(row[column - 2].split(' ')[0], '%d.%m.%Y').date()
 				if (date_csv == today):
+					data = (row[column - 1])
+				else:
 					data = "n/d"
 				break
+			# if i == this_row:
+			# 	try:
+			# 		date_csv = datetime.strptime(row[column - 2].split(' ')[0], '%Y-%m-%d').date()
+			# 	except ValueError:
+			# 		date_csv =  datetime.strptime(row[column - 2].split(' ')[0], '%d.%m.%Y').date()
+			# 	if (date_csv == today):
+			# 		data = "n/d"
+			# 	break
 			i += 1
 		return data
 
@@ -76,9 +75,6 @@ def get_data_helper(fl, delim, this_row, column):
 def write_to_csv(file, delim, data):
 	if os.path.isfile(file):
 		backup(file)
-	# else:
-	# 	with open(file, 'w') as f:
-	# 		titles = delim.join("B1")
 	with open(file, 'ab') as f:
 		# Line treminator prevent Windows to insert blank line between records
 		writer = csv.writer(f, delimiter=delim, lineterminator='\n')
