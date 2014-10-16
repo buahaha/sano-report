@@ -49,6 +49,7 @@ def get_data_helper(fl, delim, this_row, column):
 	with open(fl, 'rb') as f:
 		reader = csv.reader(f, delimiter=delim)
 		i = 0
+		data = ""
 		for row in reader:
 			if i == this_row - 1:
 				try:
@@ -60,14 +61,6 @@ def get_data_helper(fl, delim, this_row, column):
 				else:
 					data = "n/d"
 				break
-			# if i == this_row:
-			# 	try:
-			# 		date_csv = datetime.strptime(row[column - 2].split(' ')[0], '%Y-%m-%d').date()
-			# 	except ValueError:
-			# 		date_csv =  datetime.strptime(row[column - 2].split(' ')[0], '%d.%m.%Y').date()
-			# 	if (date_csv == today):
-			# 		data = "n/d"
-			# 	break
 			i += 1
 		return data
 
